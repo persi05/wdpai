@@ -1,1 +1,6 @@
 h1 { color: blue;}
+
+body {
+    height: 100vh;
+    margin: 0;
+}
