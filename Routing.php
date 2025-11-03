@@ -1,41 +1,74 @@
 <?php
 
 require_once 'src/controllers/SecurityController.php';
+require_once 'src/controllers/DashboardController.php';
 
-class Routing {
+// ToDo 
+// /dashboard/155 - REGEX wyciagnac id
+
+class Routing
+{
+    private static ?Routing $instance = null;
+
     public static $routes = [
         "login" => [
             "controller" => "SecurityController",
-            "action" => "login"
+            "action" => "login",
         ],
         "register" => [
             "controller" => "SecurityController",
-            "action" => "register"
+            "action" => "register",
+        ],
+        "dashboard" => [
+            "controller" => "DashboardController",
+            "action" => "index",
         ],
     ];
+
+    private function __construct()
+    {
+    }
     
-    public static function run(string $path) {
+    private function __clone()
+    {
+    }
+
+    public static function getInstance(): Routing
+    {
+        if (self::$instance === null) {
+            self::$instance = new Routing();
+        }
+        
+        return self::$instance;
+    }
+
+    public static function run(string $path)
+    {
+        $id = null;
+        $action = null;
+
+        if (preg_match('/^(\w+)\/(\d+)$/', $path, $matches)) 
+        {
+            $action = $matches[1];
+            $id = (int)$matches[2];
+        } 
+        else
+        {
+            $action = $path;
+        }
+
         switch ($path) {
-            case 'dashboard':
-                // TODO connect with database
-                // get elements to present on dashboard
-
-                include 'public/views/dashboard.html';
-                break;
-            case 'login':
-            case 'register':
-
-                // TODO get grom form user email,passowrd
-                // check in database if user exist
-                // if exist then return dashboard
-
+            case "dashboard":
+            case "login":
+            case "register":
                 $controller = Routing::$routes[$path]["controller"];
                 $action = Routing::$routes[$path]["action"];
 
-
                 $controllerObj = new $controller;
-                $controllerObj->$action();
+                $id = null;
+                $controllerObj->$action($id);
                 break;
+
             default:
                 include 'public/views/404.html';
                 break;
