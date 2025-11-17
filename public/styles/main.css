@@ -42,6 +42,10 @@ body {
     height: calc(100vh - 100px);
 }
  
+.messages {
+    color: red;
+    font-weight: 500;
+}
  
 @media screen and (max-width: 480px) {
     .container {

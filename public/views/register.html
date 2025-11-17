@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="public/styles/login.css">
 </head>
 <body>
-    <form method="POST" action="\login">
+    <form method="POST" action="\register">
         <h1 id="title">LOGIN!!</h1>
 
         <?php if(isset($messages)): ?>
@@ -22,9 +22,11 @@
 
         <input name="email" type="email" placeholder="Twoj email">
         <input name="password" type="haslo" placeholder="Twoje haslo">
-        <button type="submit">LOG IN</button>
+        <input name="password2" type="haslo" placeholder="Potworz haslo">
+        <input name="firstName" type="text" placeholder="Imie">
+        <input name="lastName" type="text" placeholder="Nazwisko">
 
-        <a hre="/register"> Zarejestruj sie</a>
+        <button type="submit">REGISTER</button>
 
     </form>
 </body>
