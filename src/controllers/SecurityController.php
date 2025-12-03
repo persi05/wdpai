@@ -20,6 +20,12 @@ class SecurityController extends AppController
         ],
     ];
 
+    private userRepository;
+
+    public function _construct() {
+        $this->userRepository = new UserRepository();
+    }
+
 
     public function login()
     {
@@ -29,6 +35,12 @@ class SecurityController extends AppController
 
         $email = $_POST["email"] ?? ''; 
         $password = $_POST["password"] ?? '';
+
+        $user = $userRepository->getUser($email);
+
+        password_verify($user['password'], $password){
+            //jakies ify
+        }
 
         if (empty($email) || empty($password)) {
             return $this->render('login', ['messages' => 'Fill all fields']);
@@ -90,4 +102,11 @@ class SecurityController extends AppController
         $url = "http://$_SERVER[HTTP_HOST]";
         header("Location: {$url}/login");
     }
+
+    public function register() {
+        $_POST
+        $this->userRepository->addUser($_POST);
+        return $this->render("register");
+    }
 }
+
