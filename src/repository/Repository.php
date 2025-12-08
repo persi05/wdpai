@@ -9,9 +9,7 @@ class Repository {
         $this->database = new Database();
     }
 
-}
-
- public function getUser(string $email): ?User
+    public function getUser(string $email): ?User
     {
         $stmt = $this->database->connect()->prepare('
             SELECT * FROM users u LEFT JOIN users_details ud 
@@ -22,15 +20,15 @@ class Repository {
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user == false) {
+        if (!$user) {
             return null;
         }
 
         return new User(
             $user['email'],
             $user['password'],
-            $user['name'],
-            $user['surname']
+            $user['firstname'],
+            $user['lastname']
         );
     }
 
@@ -38,13 +36,14 @@ class Repository {
     {
         $stmt = $this->database->connect()->prepare('
             INSERT INTO users_details (email, password, firstname, lastname)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?)
         ');
 
         $stmt->execute([
-            $user['email'],
-            $user['password'],
-            $user['firstname'],
-            $user['lastname']
+            $user->getEmail(),
+            $user->getPassword(),
+            $user->getFirstname(),
+            $user->getLastname()
         ]);
     }
+}

@@ -1,31 +1,33 @@
+<?php
+
+require_once __DIR__.'/AppController.php';
+require_once __DIR__.'/../repository/UserRepository.php';
+
 class SecurityController extends AppController
 {
-
-    // ======= LOKALNA "BAZA" UŻYTKOWNIKÓW =======
     private static array $users = [
         [
             'email' => 'anna@example.com',
-            'password' => '$2y$10$VljUCkQwxrsULVbZovCaF.UfkeqVNcdz8SRFQptFS/Hr8QnUgsf5G', // test123
+            'password' => '$2y$10$VljUCkQwxrsULVbZovCaF.UfkeqVNcdz8SRFQptFS/Hr8QnUgsf5G',
             'first_name' => 'Anna'
         ],
         [
             'email' => 'bartek@example.com',
-            'password' => '$2y$10$fK9rLobZK2C6rJq6B/9I6u6Udaez9CaRu7eC/0zT3pGq5piVDsElW', // haslo456
+            'password' => '$2y$10$fK9rLobZK2C6rJq6B/9I6u6Udaez9CaRu7eC/0zT3pGq5piVDsElW',
             'first_name' => 'Bartek'
         ],
         [
             'email' => 'celina@example.com',
-            'password' => '$2y$10$Cq1J6YMGzRKR6XzTb3fDF.6sC6CShm8kFgEv7jJdtyWkhC1GuazJa', // qwerty
+            'password' => '$2y$10$Cq1J6YMGzRKR6XzTb3fDF.6sC6CShm8kFgEv7jJdtyWkhC1GuazJa',
             'first_name' => 'Celina'
         ],
     ];
 
-    private userRepository;
+    private $userRepository;
 
-    public function _construct() {
+    public function __construct() {
         $this->userRepository = new UserRepository();
     }
-
 
     public function login()
     {
@@ -33,20 +35,15 @@ class SecurityController extends AppController
             return $this->render('login');
         }
 
-        $email = $_POST["email"] ?? ''; 
+        $email = $_POST["email"] ?? '';
         $password = $_POST["password"] ?? '';
-
-        $user = $userRepository->getUser($email);
-
-        password_verify($user['password'], $password){
-            //jakies ify
-        }
 
         if (empty($email) || empty($password)) {
             return $this->render('login', ['messages' => 'Fill all fields']);
         }
 
-       //TODO replace with search from database
+        $user = $this->userRepository->getUser($email);
+
         $userRow = null;
         foreach (self::$users as $u) {
             if (strcasecmp($u['email'], $email) === 0) {
@@ -62,9 +59,6 @@ class SecurityController extends AppController
         if (!password_verify($password, $userRow['password'])) {
             return $this->render('login', ['messages' => 'Wrong password']);
         }
-
-        // TODO możemy przechowywać sesje użytkowika lub token
-        // setcookie("username", $userRow['email'], time() + 3600, '/');
 
         $url = "http://$_SERVER[HTTP_HOST]";
         header("Location: {$url}/dashboard");
@@ -84,7 +78,6 @@ class SecurityController extends AppController
             return $this->render('register', ['messages' => 'Fill all fields']);
         }
 
-	// TODO this will be checked in database
         foreach (self::$users as $u) {
             if (strcasecmp($u['email'], $email) === 0) {
                 return $this->render('register', ['messages' => 'Email is taken']);
@@ -102,11 +95,4 @@ class SecurityController extends AppController
         $url = "http://$_SERVER[HTTP_HOST]";
         header("Location: {$url}/login");
     }
-
-    public function register() {
-        $_POST
-        $this->userRepository->addUser($_POST);
-        return $this->render("register");
-    }
 }
-
